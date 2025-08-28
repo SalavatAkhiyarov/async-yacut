@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}YaCut - Загрузка файлов{% endblock %}
+
+{% block content %}
+  <h1 class="text-center"><span style="color:red">Ya</span>Cut</h1>
+  <p class="text-center my-4">
+    Загрузите файлы на Яндекс.Диск, каждому будет присвоена короткая ссылка
+  </p>
+
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <form method="POST" enctype="multipart/form-data">
+        {{ form.csrf_token }}
+
+        <div class="mb-3">
+          {{ form.files(class="form-control", multiple=true) }}
+          {% if form.files.errors %}
+            <div class="text-danger small">
+              {% for error in form.files.errors %}
+                {{ error }}
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Загрузить</button>
+      </form>
+
+      {% if short_links %}
+        <div class="card mt-4 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title text-center">Загруженные файлы</h5>
+            <ul class="list-group list-group-flush">
+              {% for link in short_links %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <span class="text-truncate" style="max-width: 60%;">{{ link.name }}</span>
+                  <a href="{{ link.short }}" target="_blank">{{ link.short }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

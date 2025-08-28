@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}YaCut - Главная{% endblock %}
+
+{% block content %}
+  <h1 class="text-center"><span style="color:red">Ya</span>Cut</h1>
+  <p class="text-center my-4">
+    Создайте короткую ссылку автоматически или предложите свой вариант
+  </p>
+
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <form method="POST">
+        {{ form.csrf_token }}
+        <div class="mb-3">
+          {{ form.original_link(class="form-control form-control-lg py-2", placeholder="Длинная ссылка") }}
+          {% if form.original_link.errors %}
+            <div class="text-danger small">
+              {% for error in form.original_link.errors %}
+                {{ error }}
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+        <div class="mb-3">
+          {{ form.custom_id(class="form-control form-control-lg py-2", placeholder="Ваш вариант короткой ссылки") }}
+          {% if form.custom_id.errors %}
+            <div class="text-danger small">
+              {% for error in form.custom_id.errors %}
+                {{ error }}
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+        <input type="submit" class="btn btn-primary w-100" value="Создать">
+      </form>
+
+      {% if short_link %}
+        <div class="alert alert-success mt-4 text-center">
+          Ваша новая ссылка: <a href="{{ short_link }}" target="_blank">{{ short_link }}</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
