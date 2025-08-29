@@ -1,56 +1,52 @@
-import re
+from http import HTTPStatus
 
 from flask import jsonify, request, url_for
 
-from . import app, db
+from . import app
 from .models import URLMap
-from .views import get_unique_short_id
-
-VALID_SHORT_RE = re.compile(r'^[A-Za-z0-9]+$')
 
 
 @app.route('/api/id/', methods=('POST',))
 def create_short_link():
     if not request.is_json:
-        return jsonify({'message': 'Отсутствует тело запроса'}), 400
+        return (
+            jsonify({'message': 'Отсутствует тело запроса'}),
+            HTTPStatus.BAD_REQUEST
+        )
     data = request.get_json(silent=True)
     if not data:
-        return jsonify({'message': 'Отсутствует тело запроса'}), 400
+        return (
+            jsonify({'message': 'Отсутствует тело запроса'}),
+            HTTPStatus.BAD_REQUEST
+        )
     url = data.get('url')
     custom_id = data.get('custom_id')
     if not url:
-        return jsonify({'message': '"url" является обязательным полем!'}), 400
-    if custom_id:
-        if not VALID_SHORT_RE.match(custom_id) or len(custom_id) > 16:
-            return jsonify(
-                {'message': 'Указано недопустимое имя для короткой ссылки'}
-            ), 400
-        if (
-            custom_id == 'files'
-            or URLMap.query.filter_by(short=custom_id).first()
-        ):
-            return jsonify(
-                {
-                    'message': (
-                        'Предложенный вариант короткой ссылки уже существует.'
-                    )
-                }
-            ), 400
-        short = custom_id
-    else:
-        short = get_unique_short_id()
-    urlmap = URLMap(original=url, short=short)
-    db.session.add(urlmap)
-    db.session.commit()
-    return jsonify({
-        'url': url,
-        'short_link': url_for('redirect_view', short=short, _external=True)
-    }), 201
+        return (
+            jsonify({'message': '"url" является обязательным полем!'}),
+            HTTPStatus.BAD_REQUEST
+        )
+    try:
+        urlmap = URLMap.create(original=url, custom_id=custom_id)
+    except ValueError as e:
+        return jsonify({'message': str(e)}), HTTPStatus.BAD_REQUEST
+    return (
+        jsonify({
+            'url': urlmap.original,
+            'short_link': url_for(
+                'redirect_view', short=urlmap.short, _external=True
+            ),
+        }),
+        HTTPStatus.CREATED,
+    )
 
 
 @app.route('/api/id/<string:short_id>/', methods=('GET',))
 def get_original_link(short_id):
-    urlmap = URLMap.query.filter_by(short=short_id).first()
+    urlmap = URLMap.get_by_short(short_id)
     if not urlmap:
-        return jsonify({'message': 'Указанный id не найден'}), 404
-    return jsonify({'url': urlmap.original}), 200
+        return (
+            jsonify({'message': 'Указанный id не найден'}),
+            HTTPStatus.NOT_FOUND
+        )
+    return jsonify({'url': urlmap.original}), HTTPStatus.OK

@@ -14,13 +14,11 @@
 
         <div class="mb-3">
           {{ form.files(class="form-control", multiple=true) }}
-          {% if form.files.errors %}
-            <div class="text-danger small">
-              {% for error in form.files.errors %}
-                {{ error }}
-              {% endfor %}
-            </div>
-          {% endif %}
+          <div class="text-danger small">
+            {% for error in form.files.errors %}
+              {{ error }}
+            {% endfor %}
+          </div>
         </div>
 
         <button type="submit" class="btn btn-primary w-100">Загрузить</button>

@@ -5,13 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}YaCut - укоротитель ссылок{% endblock %}</title>
 
-  <!-- Favicon -->
   <link rel="icon" href="{{ url_for('static', filename='img/fav/fav.ico') }}" type="image">
   <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='img/fav/apple-touch-icon.png') }}">
   <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='img/fav/favicon-32x32.png') }}">
   <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='img/fav/favicon-16x16.png') }}">
 
-  <!-- Bootstrap -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   {% block extra_css %}{% endblock %}
@@ -41,13 +39,11 @@
 
   <main class="container my-5 px-4">
     {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <div class="alert alert-info text-center">
-          {% for message in messages %}
-            <div>{{ message }}</div>
-          {% endfor %}
-        </div>
-      {% endif %}
+      <div class="alert alert-info text-center">
+        {% for message in messages %}
+          <div>{{ message }}</div>
+        {% endfor %}
+      </div>
     {% endwith %}
 
     {% block content %}{% endblock %}
@@ -57,7 +53,6 @@
     <p>Укоротитель ссылок YaCut</p>
   </footer>
 
-  <!-- Bootstrap JS -->
   <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
   {% block extra_js %}{% endblock %}
 </body>

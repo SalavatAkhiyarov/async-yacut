@@ -13,23 +13,19 @@
         {{ form.csrf_token }}
         <div class="mb-3">
           {{ form.original_link(class="form-control form-control-lg py-2", placeholder="Длинная ссылка") }}
-          {% if form.original_link.errors %}
-            <div class="text-danger small">
-              {% for error in form.original_link.errors %}
-                {{ error }}
-              {% endfor %}
-            </div>
-          {% endif %}
+          <div class="text-danger small">
+            {% for error in form.original_link.errors %}
+              {{ error }}
+            {% endfor %}
+          </div>
         </div>
         <div class="mb-3">
           {{ form.custom_id(class="form-control form-control-lg py-2", placeholder="Ваш вариант короткой ссылки") }}
-          {% if form.custom_id.errors %}
-            <div class="text-danger small">
-              {% for error in form.custom_id.errors %}
-                {{ error }}
-              {% endfor %}
-            </div>
-          {% endif %}
+          <div class="text-danger small">
+            {% for error in form.custom_id.errors %}
+              {{ error }}
+            {% endfor %}
+          </div>
         </div>
         <input type="submit" class="btn btn-primary w-100" value="Создать">
       </form>
