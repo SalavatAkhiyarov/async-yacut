@@ -5,7 +5,7 @@ from http import HTTPStatus
 import aiohttp
 from flask import Response, abort, flash, redirect, render_template, url_for
 
-from . import app, db
+from . import app
 from .forms import FileForm, URLForm
 from .models import URLMap
 
