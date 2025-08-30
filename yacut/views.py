@@ -53,9 +53,7 @@ def index():
         except ValueError as e:
             flash(str(e))
             return render_template('index.html', form=form)
-        short_link = url_for(
-            'redirect_view', short=urlmap.short, _external=True
-        )
+        short_link = urlmap.short_link
         flash(f'Ваша новая ссылка: {short_link}')
         return render_template('index.html', form=form, short_link=short_link)
     return render_template('index.html', form=form)
@@ -92,9 +90,7 @@ def files():
 
 @app.route('/<string:short>')
 def redirect_view(short):
-    urlmap = URLMap.get_by_short(short)
-    if not urlmap:
-        abort(HTTPStatus.NOT_FOUND)
+    urlmap = URLMap.get_by_short_or_404(short)
     path = urlmap.original
     if not path.startswith('app:/'):
         return redirect(path)

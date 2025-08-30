@@ -2,9 +2,12 @@ import random
 import string
 from datetime import datetime
 
+from flask import url_for
+
 from . import db
 from .constants import (DEFAULT_SHORT_LENGTH, MAX_GENERATION_ATTEMPTS,
                         MAX_ORIGINAL_LENGTH, MAX_SHORT_LENGTH, VALID_SHORT_RE)
+from .exceptions import ShortIdGenerationError
 
 
 class URLMap(db.Model):
@@ -25,7 +28,9 @@ class URLMap(db.Model):
             short = ''.join(random.choices(chars, k=length))
             if not URLMap.query.filter_by(short=short).first():
                 return short
-        raise RuntimeError('Не удалось сгенерировать уникальный short_id')
+        raise ShortIdGenerationError(
+            'Не удалось сгенерировать уникальный short_id'
+        )
 
     @staticmethod
     def create(original, custom_id=None):
@@ -55,3 +60,11 @@ class URLMap(db.Model):
     @staticmethod
     def get_by_short(short_id):
         return URLMap.query.filter_by(short=short_id).first()
+
+    @staticmethod
+    def get_by_short_or_404(short_id):
+        return URLMap.query.filter_by(short=short_id).first_or_404()
+
+    @property
+    def short_link(self):
+        return url_for('redirect_view', short=self.short, _external=True)

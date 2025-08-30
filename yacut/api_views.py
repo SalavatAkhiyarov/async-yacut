@@ -33,9 +33,7 @@ def create_short_link():
     return (
         jsonify({
             'url': urlmap.original,
-            'short_link': url_for(
-                'redirect_view', short=urlmap.short, _external=True
-            ),
+            'short_link': urlmap.short_link
         }),
         HTTPStatus.CREATED,
     )
